@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — Signal Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="login-body">
+
+<main class="login-wrap">
+  <div class="login-card">
+    <div class="brand login-brand">
+      <span class="brand-mark">◆</span>
+      <span class="brand-name">Signal Desk</span>
+    </div>
+    <p class="login-sub">
+      Bring your own API keys. Each visitor signs in with their own — nothing
+      is shared between users, and no key is ever written to disk.
+    </p>
+
+    {% if error %}
+    <div class="login-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" class="login-form">
+      <label for="groq_key">Groq API key <span class="req">required</span></label>
+      <input type="password" id="groq_key" name="groq_key" placeholder="gsk_…" autocomplete="off" required>
+      <p class="field-note">
+        Free at <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">console.groq.com/keys</a>
+        — powers the AI reasoning panel.
+      </p>
+
+      <label for="alpaca_key">Alpaca API key <span class="opt">optional</span></label>
+      <input type="password" id="alpaca_key" name="alpaca_key" placeholder="Leave blank to use free delayed data" autocomplete="off">
+
+      <label for="alpaca_secret">Alpaca API secret <span class="opt">optional</span></label>
+      <input type="password" id="alpaca_secret" name="alpaca_secret" placeholder="" autocomplete="off">
+      <p class="field-note">
+        Free at <a href="https://alpaca.markets" target="_blank" rel="noopener noreferrer">alpaca.markets</a>
+        — a no-funding-required paper account gets you real-time data instead of the ~15 min delayed default.
+      </p>
+
+      <button type="submit" class="login-submit">Sign in</button>
+    </form>
+
+    <p class="login-footnote">
+      Keys are validated once at sign-in, then held only in server memory for
+      your session — never written to a file or database. They're cleared on
+      logout, and everyone is signed out if the server restarts.
+    </p>
+  </div>
+</main>
+
+</body>
+</html>

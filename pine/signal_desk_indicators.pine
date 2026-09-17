@@ -1,0 +1,70 @@
+//@version=5
+indicator("Signal Desk", overlay=true, precision=2)
+
+// ---------- Inputs ----------
+showVWAP     = input.bool(true, "Show VWAP")
+showMAs      = input.bool(true, "Show MA 20/50")
+fastLen      = input.int(20, "Fast MA length")
+slowLen      = input.int(50, "Slow MA length")
+
+macdFast     = input.int(12, "MACD fast")
+macdSlow     = input.int(26, "MACD slow")
+macdSignal   = input.int(9, "MACD signal")
+
+bbLen        = input.int(20, "Squeeze BB/KC length")
+bbMult       = input.float(2.0, "BB multiplier")
+kcMult       = input.float(1.5, "KC multiplier")
+
+// ---------- VWAP ----------
+vwapVal = ta.vwap(hlc3)
+plot(showVWAP ? vwapVal : na, title="VWAP", color=color.new(#E8A33D, 0), linewidth=2)
+
+// ---------- Moving averages ----------
+maFast = ta.sma(close, fastLen)
+maSlow = ta.sma(close, slowLen)
+plot(showMAs ? maFast : na, title="MA Fast", color=color.new(color.aqua, 0))
+plot(showMAs ? maSlow : na, title="MA Slow", color=color.new(color.fuchsia, 0))
+
+maBullCross = ta.crossover(maFast, maSlow)
+maBearCross = ta.crossunder(maFast, maSlow)
+plotshape(maBullCross, title="MA Golden Cross", location=location.belowbar, style=shape.triangleup, color=color.green, size=size.tiny)
+plotshape(maBearCross, title="MA Death Cross", location=location.abovebar, style=shape.triangledown, color=color.red, size=size.tiny)
+
+// ---------- MACD (separate pane) ----------
+[macdLine, signalLine, histLine] = ta.macd(close, macdFast, macdSlow, macdSignal)
+macdBullCross = ta.crossover(macdLine, signalLine)
+macdBearCross = ta.crossunder(macdLine, signalLine)
+
+// ---------- VWAP cross ----------
+vwapReclaim = ta.crossover(close, vwapVal)
+vwapLoss    = ta.crossunder(close, vwapVal)
+
+// ---------- Squeeze (Bollinger inside Keltner) ----------
+basis  = ta.sma(close, bbLen)
+dev    = bbMult * ta.stdev(close, bbLen)
+bbUp   = basis + dev
+bbDown = basis - dev
+
+atrVal   = ta.atr(bbLen)
+kcBasis  = ta.sma(close, bbLen)
+kcUp     = kcBasis + kcMult * atrVal
+kcDown   = kcBasis - kcMult * atrVal
+
+squeezeOn   = bbDown > kcDown and bbUp < kcUp
+squeezeFired = squeezeOn[1] and not squeezeOn
+momentum    = close - ta.sma(close, bbLen)
+squeezeFireUp   = squeezeFired and momentum > 0
+squeezeFireDown = squeezeFired and momentum < 0
+
+plotshape(squeezeFireUp, title="Squeeze Fire Up", location=location.belowbar, style=shape.circle, color=color.new(#E8A33D, 0), size=size.tiny)
+plotshape(squeezeFireDown, title="Squeeze Fire Down", location=location.abovebar, style=shape.circle, color=color.new(color.gray, 0), size=size.tiny)
+
+// ---------- Alerts (fire these as TradingView webhooks) ----------
+alertcondition(macdBullCross, title="MACD Bull Cross", message="{{ticker}} MACD bull cross at {{close}}")
+alertcondition(macdBearCross, title="MACD Bear Cross", message="{{ticker}} MACD bear cross at {{close}}")
+alertcondition(vwapReclaim, title="VWAP Reclaim", message="{{ticker}} reclaimed VWAP at {{close}}")
+alertcondition(vwapLoss, title="VWAP Loss", message="{{ticker}} lost VWAP at {{close}}")
+alertcondition(maBullCross, title="MA Golden Cross", message="{{ticker}} MA golden cross at {{close}}")
+alertcondition(maBearCross, title="MA Death Cross", message="{{ticker}} MA death cross at {{close}}")
+alertcondition(squeezeFireUp, title="Squeeze Fire Up", message="{{ticker}} squeeze fired up at {{close}}")
+alertcondition(squeezeFireDown, title="Squeeze Fire Down", message="{{ticker}} squeeze fired down at {{close}}")

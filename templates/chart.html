@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ ticker }} — Signal Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body data-ticker="{{ ticker }}">
+
+<header class="topbar">
+  <div class="brand">
+    <a href="/" class="back-link">← Watchlist</a>
+    <span class="brand-name">{{ ticker }}</span>
+    <button id="watch-star" class="star-btn" title="Add to watchlist" type="button">★</button>
+  </div>
+  <div class="search-wrap">
+    <input id="symbol-search" type="text" placeholder="Search any stock, ETF, or crypto…" autocomplete="off">
+    <div id="search-results" class="search-results"></div>
+  </div>
+  <div class="topbar-meta">
+    <span id="chart-status">loading…</span>
+    <a href="/logout" class="logout-link">Sign out</a>
+  </div>
+</header>
+
+<main class="chart-layout">
+  <section class="chart-main">
+    <div id="data-age-banner" class="data-age-banner">Checking data freshness…</div>
+    <div class="chart-block">
+      <h3>Live TradingView chart</h3>
+      <div id="tv_widget" class="tv-widget"></div>
+    </div>
+    <div class="chart-block">
+      <h3>Annotated signal chart <span class="chart-note">— arrows mark where a rule fired</span></h3>
+      <div id="lw_chart" class="lw-chart"></div>
+    </div>
+  </section>
+
+  <aside class="reasoning-panel">
+    <div class="panel-tabs">
+      <button class="panel-tab-btn active" data-tab="pro" type="button">Detailed</button>
+      <button class="panel-tab-btn" data-tab="dummy" type="button">Dummy (plain English)</button>
+    </div>
+
+    <div id="tab-pro">
+      <div class="score-block">
+        <div class="score-label" id="composite-label">—</div>
+        <div class="score-meta">
+          <span id="composite-score">score —</span>
+          <span id="composite-confidence">— confidence</span>
+        </div>
+        <div class="score-sub" id="trend-strength"></div>
+      </div>
+
+      <div class="mtf-note" id="mtf-note">Checking higher timeframe…</div>
+      <div class="sr-levels" id="sr-levels"></div>
+
+      <div class="narrative-block">
+        <h3>Reasoning</h3>
+        <p id="narrative">Loading AI reasoning…</p>
+      </div>
+
+      <div class="breakdown-block">
+        <h3>Indicator breakdown</h3>
+        <div id="breakdown-list"></div>
+      </div>
+
+      <div class="tradeplan-block">
+        <h3>Reference trade plan <span class="chart-note">— rule-based (ATR + support/resistance)</span></h3>
+        <div class="tradeplan-disclaimer">
+          Mechanical reference level only, not a personalized recommendation. Fills, stops, and targets are never guaranteed.
+        </div>
+        <div id="tradeplan-body">Loading…</div>
+      </div>
+
+      <div class="outlook-block">
+        <h3>Outlook <span class="chart-note">— pattern + trend + news, hedged, not a prediction</span></h3>
+        <p id="outlook-narrative">Loading outlook…</p>
+        <div class="outlook-facts">
+          <span id="outlook-trend"></span>
+          <span id="outlook-patterns"></span>
+        </div>
+      </div>
+
+      <div class="news-block">
+        <h3>Recent news</h3>
+        <div id="news-list"></div>
+      </div>
+    </div>
+
+    <div id="tab-dummy" class="hidden">
+      <h3>Plain-English rundown</h3>
+      <p id="dummy-explanation">Loading…</p>
+    </div>
+  </aside>
+</main>
+
+<footer class="disclaimer">
+  Descriptive commentary generated from indicator data only — not financial advice, not a recommendation to trade.
+</footer>
+
+<script src="/static/search.js"></script>
+<script src="/static/chart.js"></script>
+</body>
+</html>

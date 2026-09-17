@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">◆</span>
+    <span class="brand-name">Signal Desk</span>
+  </div>
+  <div class="search-wrap">
+    <input id="symbol-search" type="text" placeholder="Search any stock, ETF, or crypto…" autocomplete="off">
+    <div id="search-results" class="search-results"></div>
+  </div>
+  <div class="topbar-meta">
+    <span id="last-run">not run yet</span>
+    <button id="refresh-btn" type="button">Refresh now</button>
+    <a href="/logout" class="logout-link">Sign out</a>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="panel watchlist-panel">
+    <div class="panel-head">
+      <h2>Watchlist</h2>
+      <span class="count" id="watchlist-count">{{ watchlist|length }}/{{ max_watchlist }}</span>
+    </div>
+    <table class="watchlist-table">
+      <thead>
+        <tr><th></th><th>Ticker</th><th>Last</th><th>Chg</th><th>Signal</th></tr>
+      </thead>
+      <tbody id="watchlist-body">
+        {% for t in watchlist %}
+        <tr data-ticker="{{ t }}">
+          <td class="watch-star"><button class="star-btn active" data-ticker="{{ t }}" title="Remove from watchlist" type="button">★</button></td>
+          <td class="ticker"><a href="/chart/{{ t }}">{{ t }}</a></td>
+          <td class="price">—</td>
+          <td class="change">—</td>
+          <td class="composite">—</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="poll-note">Up to {{ max_watchlist }} tickers · star a chart to add, star it here to remove</p>
+  </section>
+
+  <section class="panel feed-panel">
+    <div class="panel-head">
+      <h2>Signal feed</h2>
+      <span class="count" id="feed-count">0</span>
+    </div>
+    <div id="feed-list" class="feed-list">
+      <p class="empty-state">No signals yet. They'll appear here as your watchlist gets scanned.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="disclaimer">
+  Descriptive commentary generated from indicator data only — not financial advice, not a recommendation to trade.
+</footer>
+
+<script>const MAX_WATCHLIST = {{ max_watchlist }};</script>
+<script src="/static/search.js"></script>
+<script src="/static/dashboard.js"></script>
+</body>
+</html>

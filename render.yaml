@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: signal-desk
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 1 --threads 8 --timeout 120
+    envVars:
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: FORCE_SECURE_COOKIES
+        value: "true"
+      - key: DEFAULT_WATCHLIST
+        value: "AAPL,MSFT,NVDA,SPY,BTC-USD"
+      - key: DISPLAY_TIMEZONE
+        value: "America/Toronto"
+      - key: GROQ_MODEL
+        value: "openai/gpt-oss-120b"
